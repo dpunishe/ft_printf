@@ -1,31 +1,56 @@
-CC = gcc
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: dpunishe <dpunishe@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/10/16 02:43:59 by dpunishe          #+#    #+#              #
+#    Updated: 2021/10/16 02:44:00 by dpunishe         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = libftprintf.a
-CFLAGS = -Wall -Wextra -Werror -c
+LIBFT = libft
+LIBFT_LIB = libft.a
 
-SRCS=./libft/ft*.c ./source/ft*.c
+SRCS = ft_printf.c \
+	   ft_puts.c \
+	   ft_parse.c \
+	   ft_conversion.c \
+	   ft_convert_char.c \
+	   ft_convert_int.c \
+	   ft_convert_str.c \
+	   ft_convert_percent.c \
+	   ft_convert_unsigned.c \
+	   ft_convert_hex.c \
+	   ft_convert_ptr.c
+INCLUDE = ft_printf.h
+OBJS = ${SRCS:.c=.o}
+RM = rm -rf
 
-OBJECTS=ft*.o
-LIB_PATH = ./libft
-INCLUDES=./includes
+LIBC = ar rcs
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
 
-all:$(NAME)
+all: ${NAME}
 
-$(NAME):
-	@make re -C $(LIB_PATH)
-	@$(CC) -g3 $(CFLAGS) $(SRCS) -I$(INCLUDES)
-	@ar rc $(NAME) $(OBJECTS) $(LIB_PATH)/*.o
-	@ranlib $(NAME)
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o ${<:.c=.o} -I${INCLUDE}
 
-bonus: re
+${NAME} : ${OBJS}
+	make all -C ${LIBFT}/
+	cp ${LIBFT}/${LIBFT_LIB} ${NAME}
+	${LIBC} ${NAME} ${OBJS}
 
 clean:
-	@/bin/rm -f $(OBJECTS)
-	@make clean -C $(LIB_PATH)
-
+		${RM} ${OBJS}
+		make clean -C ${LIBFT}
 
 fclean: clean
-	@/bin/rm -f $(NAME)
+		${RM} ${NAME}
+		make fclean -C ${LIBFT}
 
 re: fclean all
 
-.PHONY:	all clean fclean re
+.PHONY: all clean fclean re
